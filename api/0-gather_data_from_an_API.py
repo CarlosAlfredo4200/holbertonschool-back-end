@@ -1,47 +1,41 @@
 #!/usr/bin/python3
 """
-Checks student output for returning info from REST API
+inport module requests and sys
 """
-
 import requests
-import sys
-
-users_url = "https://jsonplaceholder.typicode.com/users"
-todos_url = "https://jsonplaceholder.typicode.com/todos"
+from sys import argv
 
 
-def first_line_formatting(id):
-    """ Check student output formatting """
+def get_employee_todo_progress(employee_id):
+    API_URL = 'https://jsonplaceholder.typicode.com'
 
-    todos_count = 0
-    todos_done = 0
+    response = requests.get(
+        f'{API_URL}/users/{employee_id}/todos',
+        params={'_expand': 'user'}
+    )
 
-    resp = requests.get(todos_url).json()
-    for i in resp:
-        if i['userId'] == id:
-            todos_count += 1
-        if (i['completed'] and i['userId'] == id):
-            todos_done += 1
+    if response.status_code == 200:
+        data = response.json()
+        name = data[0]['user']['name']
+        tasks_done = [task for task in data if task['completed']]
+        num_tasks_done = len(tasks_done)
+        num_tasks_total = len(data)
 
-    resp = requests.get(users_url).json()
+        print((
+            f"Employee {name} is done with tasks "
+            f"({num_tasks_done}/{num_tasks_total}):"
+        ))
 
-    name = None
-    for i in resp:
-        if i['id'] == id:
-            name = i['name']
-
-    filename = 'student_output'
-    with open(filename, 'r') as f:
-        first = f.readline().strip()
-
-    output = "Employee {} is done with tasks({}/{}):".format(
-        name, todos_done, todos_count)
-
-    if first == output:
-        print("First line formatting: OK")
+        for task in tasks_done:
+            print(f"\t{task['title']}")
     else:
-        print("First line formatting: Incorrect")
+        print(f"Error: {response.status_code}")
 
 
-if __name__ == "__main__":
-    first_line_formatting(int(sys.argv[1]))
+if __name__ == '__main__':
+    if len(argv) != 2:
+        print("Usage: python script.py <employee_id>")
+        exit(1)
+
+    employee_id = int(argv[1])
+    get_employee_todo_progress(employee_id)

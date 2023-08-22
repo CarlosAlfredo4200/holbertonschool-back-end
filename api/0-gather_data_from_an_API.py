@@ -7,15 +7,14 @@ of lines
 import requests
 from sys import argv
 
-if __name__ == '__main__':
+
+def get_employee_todo_progress(employee_id):
     API_URL = 'https://jsonplaceholder.typicode.com'
 
-    user_id = argv[1]
-    response = \
-        requests.get(
-            f'{API_URL}/users/{user_id}/todos',
-            params={'_expand': 'user'}
-        )
+    response = requests.get(
+        f'{API_URL}/users/{employee_id}/todos',
+        params={'_expand': 'user'}
+    )
 
     if response.status_code == 200:
         data = response.json()
@@ -24,10 +23,21 @@ if __name__ == '__main__':
         num_tasks_done = len(tasks_done)
         num_tasks_total = len(data)
 
-        first_str = f"Employee {name} is done with tasks"
+        print((
+            f"Employee {name} is done with tasks "
+            f"({num_tasks_done}/{num_tasks_total}):"
+        ))
 
-        print(f"{first_str}({num_tasks_done}/{num_tasks_total}):")
         for task in tasks_done:
-            print(f"\t {task['title']}")
+            print(f"\t{task['title']}")
     else:
         print(f"Error: {response.status_code}")
+
+
+if __name__ == '__main__':
+    if len(argv) != 2:
+        print("Usage: python script.py <employee_id>")
+        exit(1)
+
+    employee_id = int(argv[1])
+    get_employee_todo_progress(employee_id)

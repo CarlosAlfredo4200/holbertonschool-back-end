@@ -3,9 +3,9 @@ import requests
 import sys
 
 """
-Module documentation containig a lot of lines
-"""
+Documentación del módulo que contiene varias líneas
 
+"""
 
 def get_employee_todo_progress(employee_id):
     base_url = "https://jsonplaceholder.typicode.com"
@@ -31,7 +31,6 @@ def get_employee_todo_progress(employee_id):
 
     for task in done_tasks:
         print(f"\t{task['title']}")
-
 
 # Verificar si el script se está ejecutando como programa principal
 if __name__ == "__main__":

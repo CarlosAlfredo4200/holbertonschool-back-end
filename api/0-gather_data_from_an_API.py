@@ -1,43 +1,47 @@
 #!/usr/bin/python3
 """
-Module documentation
-containig a lot
-of lines
+Checks student output for returning info from REST API
 """
+
 import requests
-from sys import argv
+import sys
+
+users_url = "https://jsonplaceholder.typicode.com/users"
+todos_url = "https://jsonplaceholder.typicode.com/todos"
 
 
-def get_employee_todo_progress(employee_id):
-    API_URL = 'https://jsonplaceholder.typicode.com'
+def first_line_formatting(id):
+    """ Check student output formatting """
 
-    response = requests.get(
-        f'{API_URL}/users/{employee_id}/todos',
-        params={'_expand': 'user'}
-    )
+    todos_count = 0
+    todos_done = 0
 
-    if response.status_code == 200:
-        data = response.json()
-        name = data[0]['user']['name']
-        tasks_done = [task for task in data if task['completed']]
-        num_tasks_done = len(tasks_done)
-        num_tasks_total = len(data)
+    resp = requests.get(todos_url).json()
+    for i in resp:
+        if i['userId'] == id:
+            todos_count += 1
+        if (i['completed'] and i['userId'] == id):
+            todos_done += 1
 
-        print((
-            f"Employee {name} is done with tasks "
-            f"({num_tasks_done}/{num_tasks_total}):"
-        ))
+    resp = requests.get(users_url).json()
 
-        for task in tasks_done:
-            print(f"\t{task['title']}")
+    name = None
+    for i in resp:
+        if i['id'] == id:
+            name = i['name']
+
+    filename = 'student_output'
+    with open(filename, 'r') as f:
+        first = f.readline().strip()
+
+    output = "Employee {} is done with tasks({}/{}):".format(
+        name, todos_done, todos_count)
+
+    if first == output:
+        print("First line formatting: OK")
     else:
-        print(f"Error: {response.status_code}")
+        print("First line formatting: Incorrect")
 
 
-if __name__ == '__main__':
-    if len(argv) != 2:
-        print("Usage: python script.py <employee_id>")
-        exit(1)
-
-    employee_id = int(argv[1])
-    get_employee_todo_progress(employee_id)
+if __name__ == "__main__":
+    first_line_formatting(int(sys.argv[1]))

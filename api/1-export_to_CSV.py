@@ -1,11 +1,9 @@
 #!/usr/bin/python3
 """
-Module documentation
-containig a lot
-of lines
+import module requests
 """
-import requests
 import csv
+import requests
 from sys import argv
 
 if __name__ == '__main__':
@@ -30,8 +28,7 @@ if __name__ == '__main__':
         print(f"{first_str}({num_tasks_done}/{num_tasks_total}):")
         for task in tasks_done:
             print(f"\t {task['title']}")
-
-        # Export data to CSV
+ 
         csv_filename = f"{user_id}.csv"
         with open(csv_filename, 'w', newline='') as csv_file:
             csv_writer = csv.writer(csv_file)
@@ -40,8 +37,7 @@ if __name__ == '__main__':
             for task in tasks_done:
                 csv_writer.writerow(
                     [user_id, name, task['completed'], task['title']])
-
-        # Perform the check for correct number of tasks in CSV
+ 
         num_lines = 0
         with open(csv_filename, 'r') as file:
             csv_reader = csv.reader(file)
@@ -49,7 +45,7 @@ if __name__ == '__main__':
                 if line:
                     num_lines += 1
 
-        if num_tasks_done == num_lines - 1:  # Subtract 1 to account for the header line
+        if num_tasks_done == num_lines - 1: 
             print("Number of tasks in CSV: OK")
         else:
             print("Number of tasks in CSV: Incorrect")

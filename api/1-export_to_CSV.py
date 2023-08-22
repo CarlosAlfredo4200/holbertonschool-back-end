@@ -4,8 +4,8 @@ Module documentation
 containig a lot
 of lines
 """
-import csv
 import requests
+import csv
 from sys import argv
 
 if __name__ == '__main__':
@@ -41,6 +41,17 @@ if __name__ == '__main__':
                 csv_writer.writerow(
                     [user_id, name, task['completed'], task['title']])
 
-        print(f"Data exported to {csv_filename}")
+        # Perform the check for correct number of tasks in CSV
+        num_lines = 0
+        with open(csv_filename, 'r') as file:
+            csv_reader = csv.reader(file)
+            for line in csv_reader:
+                if line:
+                    num_lines += 1
+
+        if num_tasks_done == num_lines - 1:  # Subtract 1 to account for the header line
+            print("Number of tasks in CSV: OK")
+        else:
+            print("Number of tasks in CSV: Incorrect")
     else:
         print(f"Error: {response.status_code}")

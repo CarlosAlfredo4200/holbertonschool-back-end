@@ -2,7 +2,9 @@
 import requests
 import sys
 
-# Definir una función para obtener el progreso de la lista de tareas de un empleado
+"""
+Module documentation containig a lot of lines
+"""
 
 
 def get_employee_todo_progress(employee_id):

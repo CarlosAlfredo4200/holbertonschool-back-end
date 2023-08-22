@@ -1,37 +1,46 @@
 #!/usr/bin/python3
 """
-Check student .CSV output of user information
+Module documentation
+containig a lot
+of lines
 """
-
-import csv
 import requests
-import sys
+import csv
+from sys import argv
 
-users_url = "https://jsonplaceholder.typicode.com/users?id="
-todos_url = "https://jsonplaceholder.typicode.com/todos"
+if __name__ == '__main__':
+    API_URL = 'https://jsonplaceholder.typicode.com'
 
+    user_id = argv[1]
+    response = \
+        requests.get(
+            f'{API_URL}/users/{user_id}/todos',
+            params={'_expand': 'user'}
+        )
 
-def user_info(id):
-    """ Check user information """
+    if response.status_code == 200:
+        data = response.json()
+        name = data[0]['user']['name']
+        tasks_done = [task for task in data if task['completed']]
+        num_tasks_done = len(tasks_done)
+        num_tasks_total = len(data)
 
-    total_tasks = 0
-    response = requests.get(todos_url).json()
-    for i in response:
-        if i['userId'] == id:
-            total_tasks += 1
+        first_str = f"Employee {name} is done with tasks"
 
-    num_lines = 0
-    with open(str(id) + ".csv", 'r') as f:
-        csv_reader = csv.reader(f)
-        for line in csv_reader:
-            if line:
-                num_lines += 1
+        print(f"{first_str}({num_tasks_done}/{num_tasks_total}):")
+        for task in tasks_done:
+            print(f"\t {task['title']}")
 
-    if total_tasks == num_lines - 1:
-        print("Number of tasks in CSV: OK")
+        # Export data to CSV
+        csv_filename = f"{user_id}.csv"
+        with open(csv_filename, 'w', newline='') as csv_file:
+            csv_writer = csv.writer(csv_file)
+            csv_writer.writerow(
+                ["USER_ID", "USERNAME", "TASK_COMPLETED_STATUS", "TASK_TITLE"])
+            for task in tasks_done:
+                csv_writer.writerow(
+                    [user_id, name, task['completed'], task['title']])
+
+        print(f"Data exported to {csv_filename}")
     else:
-        print("Number of tasks in CSV: Incorrect")
-
-
-if __name__ == "__main__":
-    user_info(int(sys.argv[1]))
+        print(f"Error: {response.status_code}")

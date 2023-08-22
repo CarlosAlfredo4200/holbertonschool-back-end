@@ -1,31 +1,37 @@
 #!/usr/bin/python3
-"""Module documentation"""
+"""
+Check student .CSV output of user information
+"""
+
 import csv
 import requests
-from sys import argv
+import sys
+
+users_url = "https://jsonplaceholder.typicode.com/users?id="
+todos_url = "https://jsonplaceholder.typicode.com/todos"
+
+
+def user_info(id):
+    """ Check user information """
+
+    total_tasks = 0
+    response = requests.get(todos_url).json()
+    for i in response:
+        if i['userId'] == id:
+            total_tasks += 1
+
+    num_lines = 0
+    with open(str(id) + ".csv", 'r') as f:
+        csv_reader = csv.reader(f)
+        for line in csv_reader:
+            if line:
+                num_lines += 1
+
+    if total_tasks == num_lines - 1:  # Subtract 1 to account for the header line
+        print("Number of tasks in CSV: OK")
+    else:
+        print("Number of tasks in CSV: Incorrect")
+
 
 if __name__ == "__main__":
-    API_URL = 'https://jsonplaceholder.typicode.com'
-
-    user_id = argv[1]
-    response = requests.get(
-        f'{API_URL}/users/{user_id}/todos',
-        params={'_expand': 'user'}
-    )
-
-    if response.status_code == 200:
-        data = response.json()
-        username = data[0]['user']['username']
-
-        csv_filename = f"{user_id}.csv"
-        with open(csv_filename, "w", encoding='utf-8', newline="") as file:
-            writer = csv.writer(file, quoting=csv.QUOTE_ALL)
-            writer.writerow(
-                ["USER_ID", "USERNAME", "TASK_COMPLETED_STATUS", "TASK_TITLE"])
-            for task in data:
-                writer.writerow(
-                    [user_id, username, task['completed'], task['title']])
-
-        print(f"Data exported to {csv_filename}")
-    else:
-        print(f"Error: {response.status_code}")
+    user_info(int(sys.argv[1]))

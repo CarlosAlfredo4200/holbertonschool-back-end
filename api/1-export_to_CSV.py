@@ -4,8 +4,8 @@ Module documentation
 containig a lot
 of lines
 """
-import requests
 import csv
+import requests
 from sys import argv
 
 if __name__ == '__main__':

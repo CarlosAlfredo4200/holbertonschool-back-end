@@ -27,7 +27,7 @@ def user_info(id):
             if line:
                 num_lines += 1
 
-    if total_tasks == num_lines - 1:  # Subtract 1 to account for the header line
+    if total_tasks == num_lines - 1:
         print("Number of tasks in CSV: OK")
     else:
         print("Number of tasks in CSV: Incorrect")
@@ -35,3 +35,4 @@ def user_info(id):
 
 if __name__ == "__main__":
     user_info(int(sys.argv[1]))
+

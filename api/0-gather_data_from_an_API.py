@@ -1,11 +1,7 @@
 #!/usr/bin/python3
+"""Import the module requests"""
 import requests
 import sys
-
-"""
-Documentación del módulo que contiene varias líneas
-
-"""
 
 
 def get_employee_todo_progress(employee_id):

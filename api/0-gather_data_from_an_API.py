@@ -1,18 +1,21 @@
 #!/usr/bin/python3
 """
-inport module requests and sys
+Module documentation
+containig a lot
+of lines
 """
 import requests
 from sys import argv
 
-
-def get_employee_todo_progress(employee_id):
+if __name__ == '__main__':
     API_URL = 'https://jsonplaceholder.typicode.com'
 
-    response = requests.get(
-        f'{API_URL}/users/{employee_id}/todos',
-        params={'_expand': 'user'}
-    )
+    user_id = argv[1]
+    response = \
+        requests.get(
+            f'{API_URL}/users/{user_id}/todos',
+            params={'_expand': 'user'}
+        )
 
     if response.status_code == 200:
         data = response.json()
@@ -21,21 +24,10 @@ def get_employee_todo_progress(employee_id):
         num_tasks_done = len(tasks_done)
         num_tasks_total = len(data)
 
-        print((
-            f"Employee {name} is done with tasks "
-            f"({num_tasks_done}/{num_tasks_total}):"
-        ))
+        first_str = f"Employee {name} is done with tasks"
 
+        print(f"{first_str}({num_tasks_done}/{num_tasks_total}):")
         for task in tasks_done:
-            print(f"\t{task['title']}")
+            print(f"\t {task['title']}")
     else:
         print(f"Error: {response.status_code}")
-
-
-if __name__ == '__main__':
-    if len(argv) != 2:
-        print("Usage: python script.py <employee_id>")
-        exit(1)
-
-    employee_id = int(argv[1])
-    get_employee_todo_progress(employee_id)
